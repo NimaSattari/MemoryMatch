@@ -3,17 +3,31 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 using TMPro;
+using Unity.VisualScripting;
 
 public class MemoryMatchPresenter : MonoBehaviour
 {
+    public static MemoryMatchPresenter Instance { get; private set; }
+    private void Awake()
+    {
+        if (Instance != null && Instance != this)
+        {
+            Destroy(this);
+        }
+        else
+        {
+            Instance = this;
+        }
+    }
+
     [Header("Set In Inspector")]
     [SerializeField] Transform cardsPanel;
     [SerializeField] Card cardPrefab;
-    [SerializeField] List<Card> cardInstantList = new List<Card>();
     [SerializeField] TextMeshProUGUI endText, scoreText;
     [SerializeField] GameObject endPanel, startPanel, gamePanel;
     [SerializeField] ParticleSystem winParticle, loseParticle;
     [SerializeField] LevelScriptableObject levelConfig;
+    [SerializeField] int howManyInARow = 5;
 
     bool canClick = true;
     int howManyCards;
@@ -21,21 +35,16 @@ public class MemoryMatchPresenter : MonoBehaviour
     MemoryMatchModel gameModel = new MemoryMatchModel();
     Sprite[] cardFrontSprites, cardBackSprites;
     Card firstCard, secondCard;
+    List<Card> cardInstantList = new List<Card>();
 
-    private void Awake()
+    private void Start()
     {
         levelConfig = CrossSceneData.levelConfig;
-        CrossSceneData.levelConfig = null;
         cardBackSprites = levelConfig.backSprites;
         cardFrontSprites = levelConfig.frontSprites;
         howManyCards = levelConfig.howManyCards;
         initTimer = levelConfig.timeToComplete;
-        //cardBackSprites = Resources.LoadAll<Sprite>("BackSprite");
-        //cardFrontSprites = Resources.LoadAll<Sprite>("FrontSprites");
-    }
 
-    private void Start()
-    {
         gameModel.onRightChoiceEvent += CorrectChoice;
         gameModel.onWrongChoiceEvent += IncorrectChoice;
         gameModel.onWinEvent += GameWon;
@@ -50,18 +59,36 @@ public class MemoryMatchPresenter : MonoBehaviour
         startPanel.SetActive(false);
     }
 
-    public void PickBtn(int Index)
+    private void MakeButtons(Dictionary<int, int> ButtonsToMake)
+    {
+        int i = 0;
+        foreach (int key in ButtonsToMake.Keys)
+        {
+            Card btn = Instantiate(cardPrefab);
+            cardInstantList.Add(btn);
+
+            btn.name = "" + i;
+            btn.transform.SetParent(cardsPanel, false);
+            btn.SetSprites(cardBackSprites[0], cardFrontSprites[ButtonsToMake[key]]);
+            btn.Key = key;
+
+            i++;
+        }
+        SortMatrix(cardsPanel, cardInstantList.Count, 1.2f);
+    }
+
+    public void PickBtn(int key)
     {
         if (!canClick) return;
 
-        cardInstantList[Index].TurnCard(true);
-        if (gameModel.IsFirstPick(Index))
+        cardInstantList[key].TurnCard(true);
+        if (gameModel.IsFirstPick(key))
         {
-            firstCard = cardInstantList[Index];
+            firstCard = cardInstantList[key];
         }
         else
         {
-            secondCard = cardInstantList[Index];
+            secondCard = cardInstantList[key];
             StartCoroutine(CheckCardsCoroutine());
         }
     }
@@ -81,26 +108,9 @@ public class MemoryMatchPresenter : MonoBehaviour
     private IEnumerator CheckCardsCoroutine()
     {
         canClick = false;
-        yield return new WaitForSeconds(1f);
+        yield return new WaitForSeconds(0.5f);
         gameModel.CheckForMatch();
         canClick = true;
-    }
-
-    private void MakeButtons(Dictionary<int, int> ButtonsToMake)
-    {
-        int i = 0;
-        foreach(int key in ButtonsToMake.Keys)
-        {
-            Card btn = Instantiate(cardPrefab);
-            cardInstantList.Add(btn);
-
-            btn.name = "" + i;
-            btn.transform.SetParent(cardsPanel, false);
-            btn.SetSprites(cardBackSprites[0], cardFrontSprites[ButtonsToMake[key]]);
-            btn.MyButton.onClick.AddListener(() => GetComponent<MemoryMatchPresenter>().PickBtn(key));
-
-            i++;
-        }
     }
 
     private void GameWon(int Choice)
@@ -128,5 +138,26 @@ public class MemoryMatchPresenter : MonoBehaviour
     private void ChangeScoreUI(int score)
     {
         scoreText.text = score.ToString();
+    }
+
+    private void SortMatrix(Transform father, int howMany, float tileSize)
+    {
+        int rows = howMany / howManyInARow;
+        int i = 0;
+        for (int row = 0; row < rows; row++)
+        {
+            for (int col = 0; col < howManyInARow; col++)
+            {
+                print(rows+ " "+ howMany+ " "+ howManyInARow+ " "+ col+ " "+ row);
+                float posX = col * tileSize;
+                float posY = row * tileSize;
+                cardInstantList[i].transform.position = new Vector2(posX, posY);
+                i++;
+            }
+        }
+
+        float gridW = howManyInARow * tileSize;
+        float gridH = rows * tileSize;
+        father.position = new Vector2(-((gridW / 2) - (tileSize / 2)), -((gridH / 2) - (tileSize / 2)));
     }
 }

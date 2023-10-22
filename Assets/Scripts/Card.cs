@@ -7,14 +7,15 @@ using UnityEngine.UI;
 public class Card : MonoBehaviour
 {
 
-    [SerializeField] Button myButton;
-    public Button MyButton
+    [SerializeField] int key;
+    public int Key
     {
-        get { return myButton; }
+        get { return key; }
+        set { key = value; }
     }
 
-    [SerializeField] Image myImage;
-    public Image MyImage
+    [SerializeField] SpriteRenderer myImage;
+    public SpriteRenderer MyImage
     {
         get { return myImage; }
     }
@@ -53,5 +54,10 @@ public class Card : MonoBehaviour
     public void DestroyCard()
     {
         myImage.enabled = false;
+    }
+
+    private void OnMouseDown()
+    {
+        MemoryMatchPresenter.Instance.PickBtn(Key);
     }
 }
