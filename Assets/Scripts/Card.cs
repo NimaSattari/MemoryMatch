@@ -6,7 +6,7 @@ using UnityEngine.UI;
 
 public class Card : MonoBehaviour
 {
-
+    [SerializeField] DOTweenActions dOTweenActions;
     [SerializeField] int key;
     public int Key
     {
@@ -14,28 +14,22 @@ public class Card : MonoBehaviour
         set { key = value; }
     }
 
-    [SerializeField] SpriteRenderer myImage;
-    public SpriteRenderer MyImage
+    [SerializeField] SpriteRenderer backImage;
+    public SpriteRenderer BackImage
     {
-        get { return myImage; }
+        get { return backImage; }
     }
-    [SerializeField] Sprite backSprite;
-    public Sprite BackSprite
+
+    [SerializeField] SpriteRenderer frontImage;
+    public SpriteRenderer FrontImage
     {
-        get { return backSprite; }
-        set { backSprite = value; }
-    }
-    [SerializeField] Sprite frontSprite;
-    public Sprite FrontSprite
-    {
-        get { return frontSprite; }
-        set { frontSprite = value; }
+        get { return frontImage; }
     }
 
     public void SetSprites(Sprite back, Sprite front)
     {
-        backSprite = back;
-        frontSprite = front;
+        backImage.sprite = back;
+        frontImage.sprite = front;
         TurnCard(false);
     }
 
@@ -43,17 +37,18 @@ public class Card : MonoBehaviour
     {
         if(turnFront)
         {
-            myImage.sprite = frontSprite;
+            dOTweenActions.DoAnimation();
         }
         else
         {
-            myImage.sprite = BackSprite;
+            dOTweenActions.DoAnimationBackward();
         }
     }
 
     public void DestroyCard()
     {
-        myImage.enabled = false;
+        backImage.enabled = false;
+        frontImage.enabled = false;
     }
 
     private void OnMouseDown()

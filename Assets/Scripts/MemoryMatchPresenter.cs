@@ -4,6 +4,7 @@ using UnityEngine;
 using UnityEngine.UI;
 using TMPro;
 using Unity.VisualScripting;
+using static UnityEngine.Rendering.DebugUI.Table;
 
 public class MemoryMatchPresenter : MonoBehaviour
 {
@@ -39,16 +40,22 @@ public class MemoryMatchPresenter : MonoBehaviour
 
     private void Start()
     {
-        levelConfig = CrossSceneData.levelConfig;
-        cardBackSprites = levelConfig.backSprites;
-        cardFrontSprites = levelConfig.frontSprites;
-        howManyCards = levelConfig.howManyCards;
-        initTimer = levelConfig.timeToComplete;
+        SetupLevelConfig();
 
         gameModel.onRightChoiceEvent += CorrectChoice;
         gameModel.onWrongChoiceEvent += IncorrectChoice;
         gameModel.onWinEvent += GameWon;
         gameModel.onChoiceChangeEvent += ChangeScoreUI;
+    }
+
+    private void SetupLevelConfig()
+    {
+        levelConfig ??= CrossSceneData.levelConfig;
+
+        cardBackSprites = levelConfig.backSprites;
+        cardFrontSprites = levelConfig.frontSprites;
+        howManyCards = levelConfig.howManyCards;
+        initTimer = levelConfig.timeToComplete;
     }
 
     public void StartGameBtn()
@@ -108,7 +115,7 @@ public class MemoryMatchPresenter : MonoBehaviour
     private IEnumerator CheckCardsCoroutine()
     {
         canClick = false;
-        yield return new WaitForSeconds(0.5f);
+        yield return new WaitForSeconds(0.75f);
         gameModel.CheckForMatch();
         canClick = true;
     }
@@ -126,7 +133,7 @@ public class MemoryMatchPresenter : MonoBehaviour
         gamePanel.SetActive(false);
         endPanel.SetActive(true);
         endText.text = "You Lost";
-        StartCoroutine(InstantiateParticle(winParticle));
+        StartCoroutine(InstantiateParticle(loseParticle));
     }
 
     IEnumerator InstantiateParticle(ParticleSystem particleToInstantiate)
@@ -151,6 +158,17 @@ public class MemoryMatchPresenter : MonoBehaviour
                 print(rows+ " "+ howMany+ " "+ howManyInARow+ " "+ col+ " "+ row);
                 float posX = col * tileSize;
                 float posY = row * tileSize;
+                cardInstantList[i].transform.position = new Vector2(posX, posY);
+                i++;
+            }
+        }
+        if (howMany % howManyInARow > 0)
+        {
+            for (int col = 0; col < howMany % howManyInARow; col++)
+            {
+                print(rows + " " + howMany + " " + howManyInARow + " " + col + " " + rows);
+                float posX = col * tileSize;
+                float posY = rows * tileSize;
                 cardInstantList[i].transform.position = new Vector2(posX, posY);
                 i++;
             }
