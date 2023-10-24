@@ -5,21 +5,38 @@ using UnityEngine;
 
 public class MemoryMatchModel
 {
-    private Dictionary<int,int> cardPlaceValue = new Dictionary<int,int>();
-    private List<int> cardValues = new List<int>();
-
+    #region PrivateFields
+    Dictionary<int,int> cardPlaceValue = new Dictionary<int,int>();
+    List<int> cardValues = new List<int>();
     bool firstChoice;
     int firstIndex, secondIndex;
     int CorrectChoice;
     int allGameChoice;
     int howManyClicked;
     RandomNumberArrayGenerator randomNumberGenerator = new RandomNumberArrayGenerator();
+    #endregion
+
+    #region PublicFields
     public event Action onRightChoiceEvent, onWrongChoiceEvent;
     public delegate void OnGameEndDelegate(int choices);
     public event OnGameEndDelegate onWinEvent;
     public delegate void OnChoiceChangeDelegate(int score);
     public event OnChoiceChangeDelegate onChoiceChangeEvent;
+    #endregion
 
+    #region PrivateMethods
+    private void CheckWin()
+    {
+        CorrectChoice++;
+        onChoiceChangeEvent?.Invoke(CorrectChoice);
+        if (CorrectChoice == allGameChoice)
+        {
+            onWinEvent?.Invoke(howManyClicked);
+        }
+    }
+    #endregion
+
+    #region PublicMethods
     public Dictionary<int, int> MakeCards(int howManyCards)
     {
         allGameChoice = howManyCards / 2;
@@ -62,14 +79,5 @@ public class MemoryMatchModel
             onWrongChoiceEvent?.Invoke();
         }
     }
-
-    public void CheckWin()
-    {
-        CorrectChoice++;
-        onChoiceChangeEvent?.Invoke(CorrectChoice);
-        if (CorrectChoice == allGameChoice)
-        {
-            onWinEvent?.Invoke(howManyClicked);
-        }
-    }
+    #endregion
 }

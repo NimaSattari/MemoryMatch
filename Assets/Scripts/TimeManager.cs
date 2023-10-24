@@ -5,6 +5,7 @@ using UnityEngine;
 
 public class TimeManager : MonoBehaviour
 {
+    #region Singleton
     private static TimeManager instance;
     public static TimeManager Instance
     {
@@ -18,13 +19,9 @@ public class TimeManager : MonoBehaviour
             return instance;
         }
     }
+    #endregion
 
     private List<Timer> timers = new List<Timer>();
-
-    public void AddTimer(float delay, System.Action action,bool looping = false)
-    {
-        timers.Add(new Timer(delay, action, looping));
-    }
 
     private void Update()
     {
@@ -39,6 +36,11 @@ public class TimeManager : MonoBehaviour
                 }
             }
         }
+    }
+
+    public void AddTimer(float delay, System.Action action, bool looping = false)
+    {
+        timers.Add(new Timer(delay, action, looping));
     }
 }
 

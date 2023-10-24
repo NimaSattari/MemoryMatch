@@ -1,13 +1,11 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-using UnityEngine.UI;
 using TMPro;
-using Unity.VisualScripting;
-using static UnityEngine.Rendering.DebugUI.Table;
 
 public class MemoryMatchPresenter : MonoBehaviour
 {
+    #region Singleton
     public static MemoryMatchPresenter Instance { get; private set; }
     private void Awake()
     {
@@ -20,7 +18,9 @@ public class MemoryMatchPresenter : MonoBehaviour
             Instance = this;
         }
     }
+    #endregion
 
+    #region InspectorFields
     [Header("Set In Inspector")]
     [SerializeField] Transform cardsPanel;
     [SerializeField] Card cardPrefab;
@@ -29,7 +29,9 @@ public class MemoryMatchPresenter : MonoBehaviour
     [SerializeField] ParticleSystem winParticle, loseParticle;
     [SerializeField] LevelScriptableObject levelConfig;
     [SerializeField] int howManyInARow = 5;
+    #endregion
 
+    #region PrivateFields
     bool canClick = true;
     int howManyCards;
     float initTimer;
@@ -37,7 +39,9 @@ public class MemoryMatchPresenter : MonoBehaviour
     Sprite[] cardFrontSprites, cardBackSprites;
     Card firstCard, secondCard;
     List<Card> cardInstantList = new List<Card>();
+    #endregion
 
+    #region UnityMethods
     private void Start()
     {
         SetupLevelConfig();
@@ -47,7 +51,9 @@ public class MemoryMatchPresenter : MonoBehaviour
         gameModel.onWinEvent += GameWon;
         gameModel.onChoiceChangeEvent += ChangeScoreUI;
     }
+    #endregion
 
+    #region PrivateMethods
     private void SetupLevelConfig()
     {
         levelConfig ??= CrossSceneData.levelConfig;
@@ -56,14 +62,6 @@ public class MemoryMatchPresenter : MonoBehaviour
         cardFrontSprites = levelConfig.frontSprites;
         howManyCards = levelConfig.howManyCards;
         initTimer = levelConfig.timeToComplete;
-    }
-
-    public void StartGameBtn()
-    {
-        MakeButtons(gameModel.MakeCards(howManyCards));
-        TimeManager.Instance.AddTimer(initTimer, GameLost, false);
-        gamePanel.SetActive(true);
-        startPanel.SetActive(false);
     }
 
     private void MakeButtons(Dictionary<int, int> ButtonsToMake)
@@ -82,22 +80,6 @@ public class MemoryMatchPresenter : MonoBehaviour
             i++;
         }
         SortMatrix(cardsPanel, cardInstantList.Count, 1.2f);
-    }
-
-    public void PickBtn(int key)
-    {
-        if (!canClick) return;
-
-        cardInstantList[key].TurnCard(true);
-        if (gameModel.IsFirstPick(key))
-        {
-            firstCard = cardInstantList[key];
-        }
-        else
-        {
-            secondCard = cardInstantList[key];
-            StartCoroutine(CheckCardsCoroutine());
-        }
     }
 
     private void CorrectChoice()
@@ -155,7 +137,7 @@ public class MemoryMatchPresenter : MonoBehaviour
         {
             for (int col = 0; col < howManyInARow; col++)
             {
-                print(rows+ " "+ howMany+ " "+ howManyInARow+ " "+ col+ " "+ row);
+                print(rows + " " + howMany + " " + howManyInARow + " " + col + " " + row);
                 float posX = col * tileSize;
                 float posY = row * tileSize;
                 cardInstantList[i].transform.position = new Vector2(posX, posY);
@@ -178,4 +160,33 @@ public class MemoryMatchPresenter : MonoBehaviour
         float gridH = rows * tileSize;
         father.position = new Vector2(-((gridW / 2) - (tileSize / 2)), -((gridH / 2) - (tileSize / 2)));
     }
+
+    #endregion
+
+    #region PublicMethods
+    public void StartGameBtn()
+    {
+        MakeButtons(gameModel.MakeCards(howManyCards));
+        TimeManager.Instance.AddTimer(initTimer, GameLost, false);
+        gamePanel.SetActive(true);
+        startPanel.SetActive(false);
+    }
+
+    public void PickBtn(int key)
+    {
+        if (!canClick) return;
+
+        cardInstantList[key].TurnCard(true);
+        if (gameModel.IsFirstPick(key))
+        {
+            firstCard = cardInstantList[key];
+        }
+        else
+        {
+            secondCard = cardInstantList[key];
+            StartCoroutine(CheckCardsCoroutine());
+        }
+    }
+
+    #endregion
 }

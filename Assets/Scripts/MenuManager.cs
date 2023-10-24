@@ -16,6 +16,7 @@ public class MenuManager : MonoBehaviour
     [Header("Inspector Set Game Scene")]
     [SerializeField] Button[] mainMenuButtons;
     [SerializeField] Button[] nextLevelButtons;
+
     private void Awake()
     {
         levelConfigs = Resources.LoadAll<LevelScriptableObject>("Configs");

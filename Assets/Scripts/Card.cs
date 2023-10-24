@@ -26,6 +26,11 @@ public class Card : MonoBehaviour
         get { return frontImage; }
     }
 
+    private void OnMouseDown()
+    {
+        MemoryMatchPresenter.Instance.PickBtn(Key);
+    }
+
     public void SetSprites(Sprite back, Sprite front)
     {
         backImage.sprite = back;
@@ -49,10 +54,5 @@ public class Card : MonoBehaviour
     {
         backImage.enabled = false;
         frontImage.enabled = false;
-    }
-
-    private void OnMouseDown()
-    {
-        MemoryMatchPresenter.Instance.PickBtn(Key);
     }
 }
