@@ -54,6 +54,10 @@ public class MemoryMatchPresenter : MonoBehaviour
     #endregion
 
     #region PrivateMethods
+
+    /// <summary>
+    /// Sets levelconfig data to presenter fields.
+    /// </summary>
     private void SetupLevelConfig()
     {
         levelConfig ??= CrossSceneData.levelConfig;
@@ -64,6 +68,9 @@ public class MemoryMatchPresenter : MonoBehaviour
         initTimer = levelConfig.timeToComplete;
     }
 
+    /// <summary>
+    /// Creates card instances from dictionary that has place and sprite int in it.
+    /// </summary>
     private void MakeButtons(Dictionary<int, int> ButtonsToMake)
     {
         int i = 0;
@@ -82,18 +89,27 @@ public class MemoryMatchPresenter : MonoBehaviour
         SortMatrix(cardsPanel, cardInstantList.Count, 1.2f);
     }
 
+    /// <summary>
+    /// Destroys Correct Cards.
+    /// </summary>
     private void CorrectChoice()
     {
         firstCard.DestroyCard();
         secondCard.DestroyCard();
     }
 
+    /// <summary>
+    /// Turns Back Incorrect Cards.
+    /// </summary>
     private void IncorrectChoice()
     {
         firstCard.TurnCard(false);
         secondCard.TurnCard(false);
     }
 
+    /// <summary>
+    /// Waits then checks cards in gameModel.
+    /// </summary>
     private IEnumerator CheckCardsCoroutine()
     {
         canClick = false;
@@ -102,6 +118,9 @@ public class MemoryMatchPresenter : MonoBehaviour
         canClick = true;
     }
 
+    /// <summary>
+    /// Process after winning.
+    /// </summary>
     private void GameWon(int Choice)
     {
         gamePanel.SetActive(false);
@@ -110,6 +129,9 @@ public class MemoryMatchPresenter : MonoBehaviour
         StartCoroutine(InstantiateParticle(winParticle));
     }
 
+    /// <summary>
+    /// Process after losing.
+    /// </summary>
     private void GameLost()
     {
         gamePanel.SetActive(false);
@@ -118,17 +140,26 @@ public class MemoryMatchPresenter : MonoBehaviour
         StartCoroutine(InstantiateParticle(loseParticle));
     }
 
+    /// <summary>
+    /// Creates a particle in a location.
+    /// </summary>
     IEnumerator InstantiateParticle(ParticleSystem particleToInstantiate)
     {
         yield return new WaitForSeconds(0.5f);
         Instantiate(particleToInstantiate.gameObject, new Vector2(Random.Range(-5f, 5f), Random.Range(-2f, 2f)), Quaternion.identity);
     }
 
+    /// <summary>
+    /// gets calledto change scoreText.
+    /// </summary>
     private void ChangeScoreUI(int score)
     {
         scoreText.text = score.ToString();
     }
 
+    /// <summary>
+    /// Sorts cardInstantList in a grid for better looks.
+    /// </summary>
     private void SortMatrix(Transform father, int howMany, float tileSize)
     {
         int rows = howMany / howManyInARow;
@@ -164,6 +195,10 @@ public class MemoryMatchPresenter : MonoBehaviour
     #endregion
 
     #region PublicMethods
+
+    /// <summary>
+    /// Start Game Button.
+    /// </summary>
     public void StartGameBtn()
     {
         MakeButtons(gameModel.MakeCards(howManyCards));
@@ -172,6 +207,9 @@ public class MemoryMatchPresenter : MonoBehaviour
         startPanel.SetActive(false);
     }
 
+    /// <summary>
+    /// Pick Card Button.
+    /// </summary>
     public void PickBtn(int key)
     {
         if (!canClick) return;

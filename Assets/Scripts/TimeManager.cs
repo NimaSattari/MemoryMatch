@@ -38,6 +38,9 @@ public class TimeManager : MonoBehaviour
         }
     }
 
+    /// <summary>
+    /// adds a timer to list with <paramref delay="timer delay"/> , <paramref action="action to excute"/> , <paramref looping="if it should loop"/>.
+    /// </summary>
     public void AddTimer(float delay, System.Action action, bool looping = false)
     {
         timers.Add(new Timer(delay, action, looping));

@@ -4,7 +4,10 @@ using System.Linq;
 
 public class RandomNumberArrayGenerator
 {
-    public List<int> Generate(int howManyNumbers, int maxNumb)
+    /// <summary>
+    /// returns list of <paramref howManyNumbers="howManyNumbers"/> integers from 0 to <paramref maxNumb="maxNumb"/>.
+    /// </summary>
+    public List<int> GenerateRandomIntegersWithoutRepeat(int howManyNumbers, int maxNumb)
     {
         List<int> arr = new List<int>(howManyNumbers);
         System.Random rnd = new System.Random();
@@ -25,25 +28,16 @@ public class RandomNumberArrayGenerator
         return arr;
     }
 
-    private bool IsDuplicate(int tmp, List<int> arr)
-    {
-        foreach (var item in arr)
-        {
-            if (item == tmp)
-            {
-                return true;
-            }
-        }
-        return false;
-    }
-
-    public List<int> GenerateRandomIntegersWithoutRepeat(int count, int low, int high)
+    /// <summary>
+    /// returns list of <paramref howManyNumbers="howManyNumbers"/> integers from <paramref low="low"/> to <paramref high="high"/>.
+    /// </summary>
+    public List<int> GenerateRandomIntegersBetweenTwoNumberWithoutRepeat(int howManyNumbers, int low, int high)
     {
         var random = new System.Random();
         var numbers = Enumerable.Range(low, high).ToList();
         var result = new List<int>();
 
-        while (result.Count < count)
+        while (result.Count < howManyNumbers)
         {
             var index = random.Next(numbers.Count);
             result.Add(numbers[index]);
@@ -51,4 +45,20 @@ public class RandomNumberArrayGenerator
         }
         return result;
     }
+
+    /// <summary>
+    /// checks if <paramref numb="numb"/> is repeated in <paramref integerList="integerList"/>.
+    /// </summary>
+    private bool IsDuplicate(int numb, List<int> integerList)
+    {
+        foreach (var item in integerList)
+        {
+            if (item == numb)
+            {
+                return true;
+            }
+        }
+        return false;
+    }
+
 }

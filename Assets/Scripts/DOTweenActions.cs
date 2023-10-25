@@ -4,21 +4,19 @@ using System.Collections;
 
 public class DOTweenActions : MonoBehaviour
 {
+    #region PrivateFields
     Vector3 initalLocation;
     Vector3 initalSize;
     Vector3 initalRotation;
+    #endregion
 
+    #region InspectorFields
     public Vector3 targetLocation;
     public Vector3 targetSize;
     public Vector3 targetRotation;
     public float animationDuration;
     public Ease animationEase = Ease.Linear;
-    [SerializeField] AnimationType animationType = AnimationType.Move;
-    public bool doOnStart;
-    public bool oneLoop;
-    public bool infiniteLoop;
-
-    enum AnimationType
+    public enum AnimationType
     {
         Move,
         Rotate,
@@ -27,6 +25,14 @@ public class DOTweenActions : MonoBehaviour
         MoveAndRotate,
         ScaleAndRotate
     }
+
+    public AnimationType animationType = AnimationType.Move;
+    public bool doOnStart;
+    public bool oneLoop;
+    public bool infiniteLoop;
+    #endregion
+
+    #region UnityMethods
 
     private void OnEnable()
     {
@@ -66,6 +72,13 @@ public class DOTweenActions : MonoBehaviour
         }
     }
 
+    #endregion
+
+    #region PublicMethods
+
+    /// <summary>
+    /// Executes animation loop for infinite times.
+    /// </summary>
     public IEnumerator InfiniteLoop()
     {
         DoAnimation();
@@ -75,6 +88,9 @@ public class DOTweenActions : MonoBehaviour
         StartCoroutine(InfiniteLoop());
     }
 
+    /// <summary>
+    /// Executes animation loop for one time.
+    /// </summary>
     public IEnumerator OneLoop()
     {
         DoAnimation();
@@ -83,6 +99,9 @@ public class DOTweenActions : MonoBehaviour
         yield return new WaitForSeconds(animationDuration);
     }
 
+    /// <summary>
+    /// Executes animation for one time.
+    /// </summary>
     public void DoAnimation()
     {
         if (animationType == AnimationType.Move)
@@ -117,6 +136,9 @@ public class DOTweenActions : MonoBehaviour
         }
     }
 
+    /// <summary>
+    /// Executes animation backwards for one time.
+    /// </summary>
     public void DoAnimationBackward()
     {
         if (animationType == AnimationType.Move)
@@ -150,4 +172,6 @@ public class DOTweenActions : MonoBehaviour
                 .Join(transform.DOLocalRotate(initalRotation, animationDuration).SetEase(animationEase));
         }
     }
+
+    #endregion
 }

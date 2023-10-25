@@ -25,6 +25,10 @@ public class MemoryMatchModel
     #endregion
 
     #region PrivateMethods
+
+    /// <summary>
+    /// Checks if all cards have matched.
+    /// </summary>
     private void CheckWin()
     {
         CorrectChoice++;
@@ -34,14 +38,19 @@ public class MemoryMatchModel
             onWinEvent?.Invoke(howManyClicked);
         }
     }
+
     #endregion
 
     #region PublicMethods
+
+    /// <summary>
+    /// returns a dictionary of card's place and spriteInt.
+    /// </summary>
     public Dictionary<int, int> MakeCards(int howManyCards)
     {
         allGameChoice = howManyCards / 2;
-        cardValues.AddRange(randomNumberGenerator.Generate(howManyCards / 2, (howManyCards / 2)));
-        cardValues.AddRange(randomNumberGenerator.Generate(howManyCards / 2, (howManyCards / 2)));
+        cardValues.AddRange(randomNumberGenerator.GenerateRandomIntegersWithoutRepeat(howManyCards / 2, (howManyCards / 2)));
+        cardValues.AddRange(randomNumberGenerator.GenerateRandomIntegersWithoutRepeat(howManyCards / 2, (howManyCards / 2)));
         for (int i = 0; i < howManyCards; i += 2)
         {
             cardPlaceValue.Add(i, cardValues[i]);
@@ -50,6 +59,9 @@ public class MemoryMatchModel
         return cardPlaceValue;
     }
 
+    /// <summary>
+    /// Checks if this is the first card getting picked.
+    /// </summary>
     public bool IsFirstPick(int key)
     {
         if (!firstChoice)
@@ -66,6 +78,9 @@ public class MemoryMatchModel
         }
     }
 
+    /// <summary>
+    /// Checks if two cards have the same SpriteInt and excutes right events.
+    /// </summary>
     public void CheckForMatch()
     {
         firstChoice = false;
